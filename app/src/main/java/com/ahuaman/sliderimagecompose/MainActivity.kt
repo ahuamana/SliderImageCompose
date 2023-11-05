@@ -95,7 +95,7 @@ fun SliderImageComposable() {
             // Our page content - Main card with image
             Card(
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(4.dp)
                     .fillMaxWidth()
                     .height(200.dp)
                     .graphicsLayer {
@@ -110,6 +110,19 @@ fun SliderImageComposable() {
                             stop = 1f,
                             fraction = 1f - pageOffset.coerceIn(0f, 1f)
                         )
+
+                        // We animate the scaleX + scaleY, between 85% and 100%
+                        scaleX = lerp(
+                            start = 0.85f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                        )
+                        scaleY = lerp(
+                            start = 0.85f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                        )
+
                     }
                 ,
                 colors = CardDefaults.cardColors(
