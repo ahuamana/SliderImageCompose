@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
+                    SliderImageComposableWithScaleAnim()
                 }
             }
         }
@@ -57,8 +57,153 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SliderImageComposable() {
+fun SliderImageComposableNormal() {
 
+    val pageCount by remember {
+        mutableStateOf(listOf<Color>(
+            Color.Red,
+            Color.Green,
+            Color.Blue,
+            Color.Yellow,
+            Color.Cyan,
+            Color.Magenta,
+            Color.Gray,
+            Color.LightGray,
+            Color.DarkGray,
+            Color.Black,
+            Color.White
+        ))
+    }
+
+    val pagerState = rememberPagerState(
+        initialPageOffsetFraction = 0f,
+        initialPage = 0
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        HorizontalPager(
+            pageCount = pageCount.size,
+            state = pagerState,
+            contentPadding = PaddingValues(50.dp),
+        ) { page ->
+            // Our page content - Main card with image
+            Card(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .fillMaxWidth()
+                    .height(200.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(pageCount[page].value)
+                ),
+                shape = RoundedCornerShape(8.dp),
+
+            ){
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    Text(
+                        text = "Page: $page",
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun SliderImageComposableWithAnimOpacity(){
+    val pageCount by remember {
+        mutableStateOf(listOf<Color>(
+            Color.Red,
+            Color.Green,
+            Color.Blue,
+            Color.Yellow,
+            Color.Cyan,
+            Color.Magenta,
+            Color.Gray,
+            Color.LightGray,
+            Color.DarkGray,
+            Color.Black,
+            Color.White
+        ))
+    }
+
+    val pagerState = rememberPagerState(
+        initialPageOffsetFraction = 0f,
+        initialPage = 0
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        HorizontalPager(
+            pageCount = pageCount.size,
+            state = pagerState,
+            contentPadding = PaddingValues(50.dp),
+        ) { page ->
+            // Our page content - Main card with image
+            Card(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .graphicsLayer {
+                        val pageOffset = (
+                                (pagerState.currentPage - page) + pagerState
+                                    .currentPageOffsetFraction
+                                ).absoluteValue
+
+                        // We animate the alpha, between 50% and 100%
+                        alpha = lerp(
+                            start = 0.3f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                        )
+
+                    }
+                ,
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(pageCount[page].value)
+                ),
+                shape = RoundedCornerShape(8.dp),
+
+                ){
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    Text(
+                        text = "Page: $page",
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun SliderImageComposableWithScaleAnim() {
     val pageCount by remember {
         mutableStateOf(listOf<Color>(
             Color.Red,
@@ -130,7 +275,7 @@ fun SliderImageComposable() {
                 ),
                 shape = RoundedCornerShape(8.dp),
 
-            ){
+                ){
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
@@ -146,6 +291,8 @@ fun SliderImageComposable() {
             }
         }
     }
+
+
 }
 
 
@@ -157,5 +304,5 @@ fun calculateCurrentOffsetForPage(page: Int): Float {
 @Preview
 @Composable
 fun SliderPrev() {
-    SliderImageComposable()
+    SliderImageComposableWithScaleAnim()
 }
