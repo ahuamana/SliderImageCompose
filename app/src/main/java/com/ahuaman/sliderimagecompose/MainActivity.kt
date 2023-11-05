@@ -28,10 +28,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
 import com.ahuaman.sliderimagecompose.ui.theme.SliderImageComposeTheme
+import kotlin.math.absoluteValue
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,16 +92,31 @@ fun SliderImageComposable() {
             state = pagerState,
             contentPadding = PaddingValues(50.dp),
         ) { page ->
-            // Our page content
+            // Our page content - Main card with image
             Card(
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth()
-                    .height(200.dp),
+                    .height(200.dp)
+                    .graphicsLayer {
+                        val pageOffset = (
+                                (pagerState.currentPage - page) + pagerState
+                                    .currentPageOffsetFraction
+                                ).absoluteValue
+
+                        // We animate the alpha, between 50% and 100%
+                        alpha = lerp(
+                            start = 0.3f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                        )
+                    }
+                ,
                 colors = CardDefaults.cardColors(
                     containerColor = Color(pageCount[page].value)
                 ),
                 shape = RoundedCornerShape(8.dp),
+
             ){
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -114,8 +133,11 @@ fun SliderImageComposable() {
             }
         }
     }
+}
 
 
+fun calculateCurrentOffsetForPage(page: Int): Float {
+    return page * 1f
 }
 
 
